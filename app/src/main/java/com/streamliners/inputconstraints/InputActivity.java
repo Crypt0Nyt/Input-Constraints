@@ -3,6 +3,7 @@ package com.streamliners.inputconstraints;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -22,6 +23,10 @@ public class InputActivity extends AppCompatActivity {
         setContentView(b.getRoot());
         setTitle("Input Activity");
         hidingErrors();
+
+//        Restoring data
+        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+        b.inputTextField.getEditText().setText(prefs.getString(Constants.SAVE,""));
     }
 
     private void hidingErrors() {
@@ -51,31 +56,32 @@ public class InputActivity extends AppCompatActivity {
         if (input.isEmpty()) {
             b.inputTextField.setError("Please enter something!");
         }
-        /*else if(!input.matches(String.valueOf(R.id.upperCase))){
-            b.inputTextField.setError("Please enter Uppercase letter!");
-        }
-        else if(!input.matches(String.valueOf(R.id.lowercaseAlpha))){
-            b.inputTextField.setError("Please enter lowercase letter");
-        }
-        else if(!input.matches(String.valueOf(R.id.digits))){
-            b.inputTextField.setError("Please enter digits");
-        }
-        else if(!input.matches(String.valueOf(R.id.mathOperations))){
-            b.inputTextField.setError("Please enter +, -, /, *");
-        }
-        else if(!input.matches(String.valueOf(R.id.symbols))){
-            b.inputTextField.setError("Please enter symbols");
-        }*/
-        else if(!input.matches(validateInput())){
+        else if (!input.matches(validateInput())) {
             b.inputTextField.setError("Invalid! enter according to the checked boxes.");
+
+         /*   if (!input.matches(Constants.UPPERCASE)) {
+                b.inputTextField.setError("Please enter Uppercase letter!");
+            }
+            if (!input.matches(Constants.LOWERCASE)) {
+                b.inputTextField.setError("Please enter lowercase letter");
+            }
+            if (!input.matches(Constants.DIGITS)) {
+                b.inputTextField.setError("Please enter digits");
+            }
+            if (!input.matches(Constants.OPERATORS)) {
+                b.inputTextField.setError("Please enter +, -, /, *");
+            }
+            if (!input.matches(Constants.OTHERS)) {
+                b.inputTextField.setError("Please enter symbols");
+            }*/
 
         }
 
 //        Sending back result using new intent to the previous activity
-        else{
-            Intent intent = new Intent(this,InputConstraintActivity.class);
-            intent.putExtra(Constants.INPUT,input);
-            setResult(RESULT_OK,intent);
+        else {
+            Intent intent = new Intent(this, InputConstraintActivity.class);
+            intent.putExtra(Constants.INPUT, input);
+            setResult(RESULT_OK, intent);
             finish();
         }
 
@@ -118,5 +124,11 @@ public class InputActivity extends AppCompatActivity {
         return regex.toString();
 
 
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+        prefs.edit().putString(Constants.SAVE, b.inputTextField.getEditText().getText().toString().trim());
     }
 }

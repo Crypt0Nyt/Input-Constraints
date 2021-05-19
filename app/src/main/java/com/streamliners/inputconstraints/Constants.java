@@ -8,4 +8,5 @@ public class Constants {
     public static final String OTHERS = "others";
     public static final String INPUT = "input";
 
+    public static final String SAVE = "save";
 }
